@@ -1,0 +1,38 @@
+{
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "customerId" : {
+      "title" : "customerId",
+      "description" : "Stores the UserId or ContactID of the User",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : false
+    },
+    "customerType" : {
+      "title" : "customerType",
+      "description" : "Stores the Id type whether it is User or Contact",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : false
+    },
+    "isVerified" : {
+      "title" : "isVerified",
+      "description" : "Stores a boolean value that represents whether the codes passed into the flow match. Is available for output.",
+      "lightning:type" : "lightning__booleanType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : false
+    },
+    "messageAfterVerification" : {
+      "title" : "messageAfterVerification",
+      "description" : "Message displayed to the user after the verification process is complete.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : true,
+      "copilotAction:isUsedByPlanner" : true
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

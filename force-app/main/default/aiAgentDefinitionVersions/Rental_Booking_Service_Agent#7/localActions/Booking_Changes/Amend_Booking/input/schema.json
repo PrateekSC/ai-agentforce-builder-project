@@ -1,0 +1,63 @@
+{
+  "required" : [ "bookingNumber", "contactId" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "bookingNumber" : {
+      "title" : "Booking Number",
+      "description" : "Booking to amend.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "contactId" : {
+      "title" : "Verified Contact Id",
+      "description" : "Contact Id from identity verification.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "driverContact" : {
+      "title" : "Driver Contact",
+      "description" : "New driver contact if the customer wants to change it. Leave blank if unchanged.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "dropoffDatetime" : {
+      "title" : "Drop-off Datetime",
+      "description" : "New drop-off date and time. Leave blank if unchanged.",
+      "lightning:type" : "lightning__dateTimeStringType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "dropoffLocation" : {
+      "title" : "Drop-off Location",
+      "description" : "New drop-off location. Leave blank if unchanged.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "flightNumber" : {
+      "title" : "Flight Number",
+      "description" : "New flight number if the customer wants to change it. Leave blank if unchanged.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "pickupDatetime" : {
+      "title" : "Pickup Datetime",
+      "description" : "New pickup date and time in ISO format. Leave blank if unchanged.",
+      "lightning:type" : "lightning__dateTimeStringType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "pickupLocation" : {
+      "title" : "Pickup Location",
+      "description" : "New pickup location. Leave blank if unchanged.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

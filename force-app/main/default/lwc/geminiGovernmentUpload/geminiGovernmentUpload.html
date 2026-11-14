@@ -1,0 +1,40 @@
+
+<template>
+    <lightning-card title="Government ID Document Upload">
+
+        <div class="slds-p-around_medium">
+
+            <lightning-combobox
+                label="Select Document Type"
+                value={documentType}
+                options={documentOptions}
+                onchange={handleDocumentType}>
+            </lightning-combobox>
+
+            <template if:true={uploadToken}>
+
+                <div class="slds-m-top_medium">
+
+                    <lightning-file-upload
+                        label="Upload Your Document"
+                        name="governmentDocument"
+                        accept={acceptedFormats}
+                        file-field-name="Guest_Upload_Token_fileupload__c"
+                        file-field-value={uploadToken}
+                        onuploadfinished={handleUploadFinished}>
+                    </lightning-file-upload>
+
+                </div>
+
+            </template>
+
+            <template if:true={message}>
+                <div class="slds-m-top_medium">
+                    {message}
+                </div>
+            </template>
+
+        </div>
+
+    </lightning-card>
+</template>

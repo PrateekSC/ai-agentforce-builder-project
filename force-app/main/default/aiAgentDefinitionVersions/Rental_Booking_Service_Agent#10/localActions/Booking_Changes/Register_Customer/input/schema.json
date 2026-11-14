@@ -1,0 +1,42 @@
+{
+  "required" : [ "email", "firstName", "lastName" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "companyName" : {
+      "title" : "Company Name",
+      "description" : "Pass the company or account name for B2B. Leave blank for a consumer; Apex will create a household-style account.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "email" : {
+      "title" : "Email",
+      "description" : "Customer email. Required. Use the address they provided.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "firstName" : {
+      "title" : "First Name",
+      "description" : "Pass the first name the customer stated. Do not invent or split a full name incorrectly; ask if unclear.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "lastName" : {
+      "title" : "Last Name",
+      "description" : "Pass the last name the customer stated. Required even if they only gave one name; ask for last name first.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "phone" : {
+      "title" : "Phone",
+      "description" : "Pass the phone they provided. Leave blank if they declined. Do not generate a number.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}
