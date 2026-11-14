@@ -46,3 +46,12 @@ $RECYCLE.BIN/
 **/__pycache__/
 **/.venv/
 **/venv/
+
+.env
+.env.*
+!.env.example
+
+*.pem
+*.key
+
+config/secrets.json
