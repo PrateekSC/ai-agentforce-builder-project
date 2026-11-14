@@ -1,0 +1,42 @@
+<template>
+    <lightning-card title="AI Account Summary">
+
+        <div class="slds-p-around_medium">
+
+            <lightning-button
+                label="Generate Summary"
+                variant="brand"
+                onclick={handleGenerate}>
+            </lightning-button>
+
+            <template if:true={summary}>
+                <div class="slds-m-top_medium">
+
+                    <p>
+                        <strong>Summary:</strong>
+                        {summary}
+                    </p>
+
+                    <p>
+                        <strong>Risk Level:</strong>
+                        {riskLevel}
+                    </p>
+
+                    <p>
+                        <strong>Recommendation:</strong>
+                        {recommendation}
+                    </p>
+
+                </div>
+            </template>
+
+            <template if:true={error}>
+                <div class="slds-text-color_error">
+                    {error}
+                </div>
+            </template>
+
+        </div>
+
+    </lightning-card>
+</template>

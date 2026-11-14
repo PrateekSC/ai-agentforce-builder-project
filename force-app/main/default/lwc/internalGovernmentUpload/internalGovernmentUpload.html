@@ -1,0 +1,37 @@
+
+<template>
+    <lightning-card title="Government ID – AI Extraction">
+
+        <div class="slds-p-around_medium">
+
+            <lightning-combobox
+                label="Document Type"
+                value={documentType}
+                options={documentOptions}
+                onchange={handleTypeChange}>
+            </lightning-combobox>
+
+            <!--<template if:true={recordId}>                        record-id={recordId}-->
+
+                <div class="slds-m-top_medium">
+
+                    <lightning-file-upload
+                        label="Upload Government ID"
+                        accept={acceptedFormats}
+                        onuploadfinished={handleUploadFinished}>
+                    </lightning-file-upload>
+
+                </div>
+
+            <!--</template>-->
+
+            <template if:true={message}>
+                <div class="slds-m-top_medium">
+                    {message}
+                </div>
+            </template>
+
+        </div>
+
+    </lightning-card>
+</template>

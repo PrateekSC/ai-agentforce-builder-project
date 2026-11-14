@@ -1,0 +1,35 @@
+{
+  "required" : [ "bookingNumber", "contactId", "customerConfirmed" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "bookingNumber" : {
+      "title" : "Booking Number",
+      "description" : "Booking to cancel.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "contactId" : {
+      "title" : "Verified Contact Id",
+      "description" : "Contact Id from identity verification.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "customerConfirmed" : {
+      "title" : "Customer Confirmed Cancellation",
+      "description" : "True only after the customer explicitly confirms they want to cancel after hearing fee and alternatives.",
+      "lightning:type" : "lightning__booleanType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "reason" : {
+      "title" : "Cancellation Reason",
+      "description" : "Reason the customer gave, in their words.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

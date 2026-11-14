@@ -1,0 +1,21 @@
+{
+  "required" : [ "bookingNumber", "email" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "bookingNumber" : {
+      "title" : "Booking Number",
+      "description" : "Customer-facing booking or reservation number. Never invent one.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "email" : {
+      "title" : "Customer Email",
+      "description" : "Email address the customer says is on the booking.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

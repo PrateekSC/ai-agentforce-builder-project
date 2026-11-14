@@ -1,0 +1,63 @@
+{
+  "required" : [ "contactId", "dropoffDatetime", "dropoffLocation", "pickupDatetime", "pickupLocation", "vehicleClass" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "contactId" : {
+      "title" : "Verified Contact Id",
+      "description" : "Pass the Contact Id stored from Verify Customer Identity or Register Customer. Never ask the customer for a Salesforce Id. Never invent one.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "driverEmail" : {
+      "title" : "Driver Email",
+      "description" : "Driver email if different from the registered email.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "dropoffDatetime" : {
+      "title" : "Drop-off Datetime",
+      "description" : "Pass drop-off date and time as the customer confirmed. Must be after pickup.",
+      "lightning:type" : "lightning__dateTimeStringType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "dropoffLocation" : {
+      "title" : "Drop-off Location",
+      "description" : "Pass the drop-off location the customer stated. If they only gave one place, confirm they want the same drop-off, then pass it.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "flightNumber" : {
+      "title" : "Flight Number",
+      "description" : "Pass only if they provided a flight number. Leave blank otherwise.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "pickupDatetime" : {
+      "title" : "Pickup Datetime",
+      "description" : "Pass pickup date and time as the customer confirmed. Do not default to today.",
+      "lightning:type" : "lightning__dateTimeStringType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "pickupLocation" : {
+      "title" : "Pickup Location",
+      "description" : "Pass the pickup location the customer stated. If unclear, ask before calling.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "vehicleClass" : {
+      "title" : "Vehicle Class",
+      "description" : "Pass the class they asked for (for example Compact, SUV, Van). If they are unsure, ask before calling.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

@@ -1,0 +1,669 @@
+system:
+    instructions: "You are an AI Agent."
+    messages:
+        welcome: |
+            Hi, I'm an AI service assistant. How can I help you?
+        error: "Sorry, it looks like something has gone wrong."
+
+config:
+    agent_label: "Rental Booking Service Agent"
+    agent_template: "SvcCopilotTmpl__AgentforceServiceAgent"
+    developer_name: "Rental_Booking_Service_Agent"
+    description: "Deliver personalized customer interactions with an autonomous AI agent. Agentforce Service Agent intelligently supports your customers with common inquiries and escalates complex issues."
+
+access:
+    default_agent_user: "rental_booking_service_agent@00djv000007htbh713558542.ext"
+
+variables:
+    authenticationKey: mutable string
+        description: "Stores the authentication key that's used to generate the verification code."
+        visibility: "Internal"
+    customerId: mutable string
+        description: "Stores the Salesforce user ID or contact ID."
+        visibility: "Internal"
+    customerType: mutable string
+        description: "Stores the customer ID type, whether it's a Salesforce user or a contact."
+        visibility: "Internal"
+    isVerified: mutable boolean = False
+        label: "isVerified"
+        description: "Stores a boolean value that indicates whether the customer code is verified."
+        visibility: "Internal"
+    EndUserId: linked string
+        source: @MessagingSession.MessagingEndUserId
+        description: "This variable may also be referred to as MessagingEndUser Id"
+    RoutableId: linked string
+        source: @MessagingSession.Id
+        description: "This variable may also be referred to as MessagingSession Id"
+    ContactId: linked string
+        source: @MessagingEndUser.ContactId
+        description: "This variable may also be referred to as MessagingEndUser ContactId"
+    EndUserLanguage: linked string
+        source: @MessagingSession.EndUserLanguage
+        description: "This variable may also be referred to as MessagingSession EndUserLanguage"
+    ChannelType: linked string
+        source: @MessagingSession.ChannelType
+        description: "This variable may also be referred to as MessagingSession ChannelType"
+    VerifiedCustomerId: mutable string
+        description: "This variable may also be referred to as VerifiedCustomerId"
+        visibility: "Internal"
+    emailCaseId: mutable string
+        description: "Stores the Salesforce Case ID created by an inbound email."
+        visibility: "External"
+    endUserEmail: mutable string
+        description: "Stores email address of the end user who sent the inbound email."
+        visibility: "External"
+    endUserContactId: mutable string
+        description: "Stores the Salesforce Contact ID associated with the end user who sent the inbound email."
+        visibility: "External"
+    verficationMessage: mutable string
+        description: "Set the verification status message."
+        label: "verficationMessage"
+    verificationCode: mutable string
+        label: "verificationCode"
+
+language:
+    additional_locales: "en_GB"
+    default_locale: "en_US"
+    all_additional_locales: False
+
+knowledge:
+    rag_feature_config_id: ""
+    citations_url: ""
+    citations_enabled: False
+
+start_agent agent_router:
+    label: "Agent Router"
+    description: "Welcome the user and determine the appropriate subagent based on user input"
+    model_config:
+        model: "model://sfdc_ai__DefaultEinsteinHyperClassifier"
+    reasoning:
+        instructions: ->
+            | Select the best tool to call based on conversation history and user's intent.
+        actions:
+            go_to_Booking_Changes: @utils.transition to @subagent.Booking_Changes
+
+subagent Booking_Changes:
+    label: "Booking Changes"
+    description: |
+
+        Handles customer requests to cancel, amend, update, or rebook an existing car rental reservation, including email, flight, pickup/drop-off date, time, and location.
+    reasoning:
+        instructions: ->
+            |Action order for Booking Changes:
+             1. Verify Customer Identity if Verified Contact Id is empty
+             If Verify Customer Identity does not find the customer, call Register Customer after collecting first name, last name, and email. Do not Create Booking until Register Customer succeeds and Verified Contact Id is stored. Never use Register Customer to change an existing booking.
+             Create Booking is only for a new reservation after the customer exists in Salesforce. If they are not found, Register Customer first. If they already have a booking they want to change, do not Create Booking; use Amend, Rebook, or Cancel instead.
+             If Verify Customer Identity fails because the customer is not found:
+             - Do not call Get Booking Details, Get Booking Alternatives, Amend Booking, Rebook Vehicle, or Cancel Booking.
+             - Tell the customer you need their details before creating a reservation.
+             - Ask for first name, last name, email, phone, and company name.
+             - Call Register Customer only after first name, last name, and email are provided.
+             - After Register Customer succeeds, store Verified Contact Id.
+             - Then collect pickup location, drop-off location, pickup datetime, drop-off datetime, and vehicle class.
+             - Repeat the trip details, get confirmation, then call Create Booking.
+             - Read back the new booking number. Never invent one.
+             If the customer already exists but has no booking, skip Register Customer and go to Create Booking after collecting trip details
+             2. Get Booking Details
+             3. If the customer wants to cancel, Get Booking Alternatives and offer amend or rebook first
+             4. Amend Booking for in-place changes; Rebook Vehicle for a new trip; Cancel Booking only after explicit confirmation
+             Never call Cancel Booking and Get Booking Alternatives in a way that skips offering alternatives.
+        actions:
+            Verify_Customer_Identity: @actions.Verify_Customer_Identity
+                with bookingNumber = ...
+                with email = ...
+            Get_Booking_Details: @actions.Get_Booking_Details
+                with bookingNumber = ...
+                with contactId = ...
+            Get_Booking_Alternatives: @actions.Get_Booking_Alternatives
+                with bookingNumber = ...
+                with contactId = ...
+            Amend_Booking: @actions.Amend_Booking
+                with bookingNumber = ...
+                with contactId = ...
+                with driverContact = ...
+                with dropoffDatetime = ...
+                with dropoffLocation = ...
+                with flightNumber = ...
+                with pickupDatetime = ...
+                with pickupLocation = ...
+            Rebook_Vehicle: @actions.Rebook_Vehicle
+                with contactId = ...
+                with dropoffDatetime = ...
+                with dropoffLocation = ...
+                with originalBookingNumber = ...
+                with pickupDatetime = ...
+                with pickupLocation = ...
+                with vehicleClass = ...
+            Cancel_Booking: @actions.Cancel_Booking
+                with bookingNumber = ...
+                with contactId = ...
+                with customerConfirmed = ...
+                with reason = ...
+            Register_Customer: @actions.Register_Customer
+                with companyName = ...
+                with email = ...
+                with firstName = ...
+                with lastName = ...
+                with phone = ...
+            Create_Booking: @actions.Create_Booking
+                with contactId = ...
+                with driverEmail = ...
+                with dropoffDatetime = ...
+                with dropoffLocation = ...
+                with flightNumber = ...
+                with pickupDatetime = ...
+                with pickupLocation = ...
+                with vehicleClass = ...
+    actions:
+        Verify_Customer_Identity:
+            label: "Verify Customer Identity"
+            description: |Verifies an existing customer using email and optional booking number. Use this first.
+                          If success is false and Next Action is REGISTER_CUSTOMER, do not start a booking. Ask for first name, last name, email, phone, and company, then call Register Customer.
+                          If the customer is found but has no booking, collect trip details and call Create Booking.
+                          If an existing booking is found, continue with Get Booking Details, Amend Booking, Rebook Vehicle, or Cancel Booking.
+                          Do not use this action to create a Contact or a Booking.
+            target: "apex://VerifyCustomerIdentityAction"
+            inputs:
+                bookingNumber: string
+                    label: "Booking Number"
+                    description: "Customer-facing booking or reservation number. Never invent one."
+                    is_required: True
+                email: string
+                    label: "Customer Email"
+                    description: "Email address the customer says is on the booking."
+                    is_required: True
+            outputs:
+                contactId: string
+                    label: "Verified Contact Id"
+                    description: "Salesforce Contact Id to store in an agent variable and pass to every later action."
+                    is_displayable: False
+                    filter_from_agent: True
+                message: string
+                    label: "Message"
+                    description: "Say this to the customer. Do not expose internal IDs."
+                    is_displayable: False
+                    filter_from_agent: False
+                success: boolean
+                    label: "Success"
+                    description: "True when booking number and email match a Contact-owned booking."
+                    is_displayable: False
+                    filter_from_agent: False
+        Get_Booking_Details:
+            label: "Get Booking Details"
+            description: "Loads one verified customer's rental booking from Salesforce, including pickup, drop-off, vehicle, email, flight, status, and cancellation fee."
+            target: "apex://GetBookingDetailsAction"
+            inputs:
+                bookingNumber: string
+                    label: "Booking Number"
+                    description: "Booking number already verified for this customer."
+                    is_required: True
+                contactId: string
+                    label: "Verified Contact Id"
+                    description: "Contact Id from Verify Customer Identity. Required. Never omit."
+                    is_required: True
+            outputs:
+                message: string
+                    label: "Message"
+                    description: "Human-readable booking summary to show in chat."
+                    is_displayable: False
+                    filter_from_agent: False
+                status: string
+                    label: "Status"
+                    description: "Current booking status from CRM after API sync."
+                    is_displayable: False
+                    filter_from_agent: False
+                success: boolean
+                    label: "Success"
+                    description: "True when the booking was found for this customer."
+                    is_displayable: False
+                    filter_from_agent: False
+        Get_Booking_Alternatives:
+            label: "Get Booking Alternatives"
+            description: "Returns amendment and rebooking options for a verified booking. Always call this when the customer asks to cancel, before Cancel Booking, and present options in plain language: (1) amend dates, locations, email, or flight, (2) rebook a different vehicle or time, (3) cancel only if they still want to cancel. Requires Verified Contact Id and Booking Number. Use also when the customer is unsure whether to change or cancel. Do not use this action to verify identity, save an amendment, create a new booking, or cancel. Never treat this action as a completed cancellation."
+            target: "apex://GetBookingAlternativesAction"
+            inputs:
+                bookingNumber: string
+                    label: "Booking Number"
+                    description: "Booking the customer wants to change or cancel."
+                    is_required: True
+                contactId: string
+                    label: "Verified Contact Id"
+                    description: "Contact Id from identity verification."
+                    is_required: True
+            outputs:
+                message: string
+                    label: "Message"
+                    description: "Options to present: amend, rebook, then cancel."
+                    is_displayable: False
+                    filter_from_agent: False
+                success: boolean
+                    label: "Success"
+                    description: "True when alternatives were returned."
+                    is_displayable: False
+                    filter_from_agent: False
+        Amend_Booking:
+            label: "Amend Booking"
+            description: "Updates the existing Booking record in Salesforce for changed fields only."
+            target: "apex://AmendBookingAction"
+            inputs:
+                bookingNumber: string
+                    label: "Booking Number"
+                    description: "Booking to amend."
+                    is_required: True
+                contactId: string
+                    label: "Verified Contact Id"
+                    description: "Contact Id from identity verification."
+                    is_required: True
+                driverContact: string
+                    label: "Driver Contact"
+                    description: "New driver contact if the customer wants to change it. Leave blank if unchanged."
+                    is_required: False
+                dropoffDatetime: object
+                    label: "Drop-off Datetime"
+                    description: "New drop-off date and time. Leave blank if unchanged."
+                    is_required: False
+                    complex_data_type_name: "lightning__dateTimeStringType"
+                dropoffLocation: string
+                    label: "Drop-off Location"
+                    description: "New drop-off location. Leave blank if unchanged."
+                    is_required: False
+                flightNumber: string
+                    label: "Flight Number"
+                    description: "New flight number if the customer wants to change it. Leave blank if unchanged."
+                    is_required: False
+                pickupDatetime: object
+                    label: "Pickup Datetime"
+                    description: "New pickup date and time in ISO format. Leave blank if unchanged."
+                    is_required: False
+                    complex_data_type_name: "lightning__dateTimeStringType"
+                pickupLocation: string
+                    label: "Pickup Location"
+                    description: "New pickup location. Leave blank if unchanged."
+                    is_required: False
+            outputs:
+                message: string
+                    label: "Message"
+                    description: "Confirmation or follow-up question for the customer."
+                    is_displayable: False
+                    filter_from_agent: False
+                success: boolean
+                    label: "Success"
+                    description: "True only when the booking API accepted the amendment."
+                    is_displayable: False
+                    filter_from_agent: False
+        Rebook_Vehicle:
+            label: "Rebook Vehicle"
+            description: "Creates a new Booking record in Salesforce and sets the original booking Status to Rebooked."
+            target: "apex://RebookVehicleAction"
+            inputs:
+                contactId: string
+                    label: "Verified Contact Id"
+                    description: "Contact Id from identity verification."
+                    is_required: True
+                dropoffDatetime: object
+                    label: "Drop-off Datetime"
+                    description: "New drop-off date and time."
+                    is_required: True
+                    complex_data_type_name: "lightning__dateTimeStringType"
+                dropoffLocation: string
+                    label: "Drop-off Location"
+                    description: "New drop-off location. If omitted by the customer, reuse pickup location only after asking."
+                    is_required: True
+                originalBookingNumber: string
+                    label: "Original Booking Number"
+                    description: "Existing booking being replaced."
+                    is_required: True
+                pickupDatetime: object
+                    label: "Pickup Datetime"
+                    description: "New pickup date and time."
+                    is_required: True
+                    complex_data_type_name: "lightning__dateTimeStringType"
+                pickupLocation: string
+                    label: "Pickup Location"
+                    description: "New pickup location stated by the customer."
+                    is_required: True
+                vehicleClass: string
+                    label: "Vehicle Class"
+                    description: "Requested class such as Compact, SUV, or Van."
+                    is_required: True
+            outputs:
+                message: string
+                    label: "Message"
+                    description: "Rebooking confirmation for chat."
+                    is_displayable: False
+                    filter_from_agent: False
+                newBookingNumber: string
+                    label: "New Booking Number"
+                    description: "New reservation number to read back to the customer."
+                    is_displayable: False
+                    filter_from_agent: False
+                success: boolean
+                    label: "Success"
+                    description: "True when a new booking number was issued."
+                    is_displayable: False
+                    filter_from_agent: False
+        Cancel_Booking:
+            label: "Cancel Booking"
+            description: "Sets the Booking record Status to Cancelled in Salesforce."
+            target: "apex://CancelBookingAction"
+            inputs:
+                bookingNumber: string
+                    label: "Booking Number"
+                    description: "Booking to cancel."
+                    is_required: True
+                contactId: string
+                    label: "Verified Contact Id"
+                    description: "Contact Id from identity verification."
+                    is_required: True
+                customerConfirmed: boolean
+                    label: "Customer Confirmed Cancellation"
+                    description: "True only after the customer explicitly confirms they want to cancel after hearing fee and alternatives."
+                    is_required: True
+                reason: string
+                    label: "Cancellation Reason"
+                    description: "Reason the customer gave, in their words."
+                    is_required: True
+            outputs:
+                message: string
+                    label: "Message"
+                    description: "Cancellation result to show in chat."
+                    is_displayable: False
+                    filter_from_agent: False
+                success: boolean
+                    label: "Success"
+                    description: "True only when the booking system cancelled the reservation."
+                    is_displayable: False
+                    filter_from_agent: False
+        Register_Customer:
+            label: "Register Customer"
+            description: |        
+                          Creates a Customer Contact and Account in Salesforce when the person is not already on file. Use this only after Verify Customer Identity fails because the customer was not found, or Next Action is REGISTER_CUSTOMER, or errorCode is CUSTOMER_NOT_FOUND.
+                                                                                
+                          Do not start a booking yet. Before calling, ask for first name, last name, and email. Also ask for phone and company name; those are optional but preferred for B2B. Repeat the details and call this only after the customer confirms them. Do not invent a name, email, phone, or company.
+                                                                                
+                          On success, store Verified Contact Id from the output. Then collect pickup location, drop-off location, pickup datetime, drop-off datetime, and vehicle class, and call Create Booking. Do not call Create Booking in the same turn unless every trip field is already confirmed.
+                                                                                
+                          If a Contact with that email already exists, treat success as true, store Verified Contact Id, and continue to Create Booking. Do not tell the customer registration failed.
+                                                                                
+                          If success is false, do not create a booking and do not invent a Contact Id.
+                                                                                
+                          Do not use this action to verify an existing booking, get booking details, get alternatives, amend, rebook, cancel, or create a Booking record.
+                                                                                
+                          Do not call Register Customer when Verify already found a Contact. In that case store Verified Contact Id from Verify and either continue booking changes or call Create Booking if they have no reservation yet.
+            target: "apex://RegisterCustomerAction"
+            inputs:
+                companyName: string
+                    label: "Company Name"
+                    description: "Pass the company or account name for B2B. Leave blank for a consumer; Apex will create a household-style account."
+                    is_required: False
+                email: string
+                    label: "Email"
+                    description: "Customer email. Required. Use the address they provided."
+                    is_required: True
+                firstName: string
+                    label: "First Name"
+                    description: "Pass the first name the customer stated. Do not invent or split a full name incorrectly; ask if unclear."
+                    is_required: True
+                lastName: string
+                    label: "Last Name"
+                    description: "Pass the last name the customer stated. Required even if they only gave one name; ask for last name first."
+                    is_required: True
+                phone: string
+                    label: "Phone"
+                    description: "Pass the phone they provided. Leave blank if they declined. Do not generate a number."
+                    is_required: False
+            outputs:
+                contactId: string
+                    label: "Verified Contact Id"
+                    description: "Store in the agent variable. Never read a Salesforce Id aloud."
+                    is_displayable: False
+                    filter_from_agent: False
+                message: string
+                    label: "Message"
+                    description: "Say this in customer-friendly language. Confirm their details were saved, then ask for trip details."
+                    is_displayable: True
+                    filter_from_agent: False
+                nextAction: string
+                    label: "Next Action"
+                    description: "If CREATE_BOOKING, collect trip details next. Do not amend, cancel, or rebook yet."
+                    is_displayable: False
+                    filter_from_agent: False
+                success: boolean
+                    label: "Success"
+                    description: "If false, say Message and do not continue to Create Booking."
+                    is_displayable: False
+                    filter_from_agent: False
+        Create_Booking:
+            label: "Create Booking"
+            description: |Creates a new rental Booking record in Salesforce for a customer who is already registered. Use this after Register Customer succeeds, or after Verify Customer Identity finds a customer with no booking on file. Do not call this until Verified Contact Id is stored.
+                        
+                          Before calling, collect every required trip field from the customer: pickup location, drop-off location, pickup datetime, drop-off datetime, and vehicle class. Optionally collect driver email and flight number. Repeat those values in chat and call this only after the customer confirms them. Do not guess missing dates, times, locations, or vehicle class.
+                        
+                          On success, read back the Booking Number from the action output and summarize the trip. If success is false, do not invent a booking number and do not claim the reservation was saved.
+                        
+                          Do not use this action to register a new customer, verify identity, look up an existing booking, offer cancellation alternatives, amend an existing booking, rebook over an existing booking, or cancel a booking.
+                        
+                          Do not call Create Booking when Verify Customer Identity found an existing booking and Next Action is CONTINUE_BOOKING_CHANGES. In that case use Get Booking Details, Amend Booking, Rebook Vehicle, or Cancel Booking instead.
+                        
+                          Do not call Create Booking when Verify failed with CUSTOMER_NOT_FOUND or Next Action is REGISTER_CUSTOMER. Ask for first name, last name, email, phone, and company, call Register Customer first, then collect trip details and call Create Booking.
+            target: "apex://CreateBookingAction"
+            inputs:
+                contactId: string
+                    label: "Verified Contact Id"
+                    description: "Pass the Contact Id stored from Verify Customer Identity or Register Customer. Never ask the customer for a Salesforce Id. Never invent one."
+                    is_required: True
+                driverEmail: string
+                    label: "Driver Email"
+                    description: "Driver email if different from the registered email."
+                    is_required: False
+                dropoffDatetime: object
+                    label: "Drop-off Datetime"
+                    description: "Pass drop-off date and time as the customer confirmed. Must be after pickup."
+                    is_required: True
+                    complex_data_type_name: "lightning__dateTimeStringType"
+                dropoffLocation: string
+                    label: "Drop-off Location"
+                    description: "Pass the drop-off location the customer stated. If they only gave one place, confirm they want the same drop-off, then pass it."
+                    is_required: True
+                flightNumber: string
+                    label: "Flight Number"
+                    description: "Pass only if they provided a flight number. Leave blank otherwise."
+                    is_required: False
+                pickupDatetime: object
+                    label: "Pickup Datetime"
+                    description: "Pass pickup date and time as the customer confirmed. Do not default to today."
+                    is_required: True
+                    complex_data_type_name: "lightning__dateTimeStringType"
+                pickupLocation: string
+                    label: "Pickup Location"
+                    description: "Pass the pickup location the customer stated. If unclear, ask before calling."
+                    is_required: True
+                vehicleClass: string
+                    label: "Vehicle Class"
+                    description: "Pass the class they asked for (for example Compact, SUV, Van). If they are unsure, ask before calling."
+                    is_required: True
+            outputs:
+                bookingNumber: string
+                    label: "Booking Number"
+                    description: "Read this number back. Never invent a number if Success is false or this is blank."
+                    is_displayable: True
+                    filter_from_agent: False
+                message: string
+                    label: "Message"
+                    description: "Say this in customer-friendly language. Do not expose Salesforce Ids."
+                    is_displayable: True
+                    filter_from_agent: False
+                success: boolean
+                    label: "Success"
+                    description: "If false, tell the customer the reservation was not created and use Message."
+                    is_displayable: False
+                    filter_from_agent: False
+
+connection messaging:
+    escalation_message: "One moment, I'm transferring our conversation to get you more help."
+    outbound_route_type: "OmniChannelFlow"
+    outbound_route_name: "flow://Outbound_Omni_Routing_Config_Flow"
+    adaptive_response_allowed: True
+    label: "Messaging"
+    description: "Deliver multimedia content on enhanced Messaging channels."
+    reasoning:
+        instructions: |
+            Do not use any of the * response formats when none of the instructions below are met.
+            Do not use below instructions where the response contains more than 10 choices.
+            Do not use any of the Messaging* type formatting where the response that contains only a single, text-only choice and does not include images or URLs.
+            Always use {!@response_actions.messaging_choices} when showing choice text responses with GREATER THAN 1 choice and LESSER THAN 11 choices to the user as it employs the rich UI renditions, except when the response contains only two choices with clear binary intent (e.g., Yes/No, Continue/Cancel, Proceed/Exit, etc.). Such responses should be returned as plain text to preserve context and tone.
+            Use {!@response_actions.messaging_choices} only when the prompt explicitly references the preceding list and asks the user to make a selection from it. Key phrases include "Which of these would you like?" or "Let me know which option you're interested in".
+            DO NOT use {!@response_actions.messaging_choices} if the prompt is a generic offer of help that could be used in any context, even if it follows a list. Phrases like "Let me know if you need further assistance", "Feel free to reach out if you have any more questions" or "Let me know if there's anything else I can do" fall into this category because they do not require a choice from the list.
+            Always use {!@response_actions.messaging_choices_with_images} when showing choice image response to the user as it employs the rich UI renditions.
+            Always use {!@response_actions.messaging_rich_link} when the response contains only one choice AND contains BOTH of the following elements in any combination or order for that choice : 1. A Website/Web page URL : A clearly identifiable, fully qualified URL or a short URL, including a resolvable domain name 2. An image URL (direct image link, image hosting service , or URL ending in image extensions like .jpg, .png or .jpeg) Use {!@response_actions.messaging_rich_link} for rich UI rendering when both content types are detected.
+            Do not use {!@response_actions.messaging_rich_link} when there is more than 1 option,choice or items present.
+            Always use {!@response_actions.messaging_time_picker} if the response contains one or more available times where the full ISO 8601 timestamp format, including an explicit UTC offset (e.g., '2025-11-11T10:00:00.000-08:00'), is present.
+            DO NOT use {!@response_actions.messaging_time_picker} if the available times are only presented in a non-ISO format (e.g., '10:00 AM - 11:00 AM') and the full ISO 8601 timestamp with offset is entirely absent from the response text.
+            Use {!@response_actions.messaging_audio} to respond with an audio note when the user's inbound message was an audio note (voice message) AND the response is natural conversational prose — not a table, code, or a response built around URLs or selectable choices.
+            Do NOT combine {!@response_actions.messaging_audio} with any other response action in the same turn.
+        response_actions:
+            messaging_choices: @response_formats.messaging_choices
+            messaging_choices_with_images: @response_formats.messaging_choices_with_images
+            messaging_rich_link: @response_formats.messaging_rich_link
+            messaging_time_picker: @response_formats.messaging_time_picker
+            messaging_audio: @response_formats.messaging_audio
+    response_formats:
+        messaging_choices:
+            label: "Rich Choice Response"
+            description: "A response action. Use this to prompt the user to select one of many simple available text choices ONLY if the number of choices is GREATER THAN 1 and LESSER THAN 11. The user will be presented rich UI."
+            target: "system://MessagingChoices"
+            inputs:
+                message: string
+                    description: "Strictly extract only the introductory and contextual text from the response. This is all content *before* the list of choices and its title. Do NOT use any phrase that serves as a heading for the choices such as \"here are some options to choose\". If no such descriptive text exists, the value MUST be \"empty\"."
+                    is_required: True
+                choices: list[string]
+                    is_required: True
+                title: string
+                    description: "A concise and descriptive heading for the options. Use the short sentence or phrase that introduces the list of options if it already exists, otherwise use something like \"Here are a few options:\""
+                    is_required: True
+        messaging_choices_with_images:
+            label: "Rich Choice With Images"
+            description: "A response action containing UI components. Use this to prompt the user to select one of many simple available choices with images. The user will be presented rich UI containing image options."
+            target: "system://MessagingChoicesWithImages"
+            inputs:
+                message: string
+                    description: "Extract all introductory, contextual and the final phrase that introduces the choices from the response. The message should contain all content that appears before the list of choices begins. Do not include any the link url, image url and link title"
+                    is_required: True
+                choices:
+                    description: "An array of choices, each containing a title, subTitle, secondarySubTitle, tertiarySubTitle, an image URL, an image MIME type and an optional action text."
+                    is_required: True
+                    type: list
+                        value: object
+                            fields:
+                                title: string
+                                    description: "The title of the choice."
+                                    is_required: True
+                                imageUrl: string
+                                    description: "A URL to an image representing the choice. Should only be a URL."
+                                    is_required: True
+                                subTitle: string
+                                    description: "The provided subTitles for the choice. Use verbatim if exists. If no such field exists, the value MUST be \"empty\"."
+                                    is_required: True
+                                secondarySubTitle: string
+                                    description: "The provided secondarySubTitle for the choice. Use verbatim if exists. If no such field exists, the value MUST be \"empty\"."
+                                    is_required: True
+                                tertiarySubTitle: string
+                                    description: "The provided tertiarySubTitle for the choice. Use verbatim if exists. If no such field exists, the value MUST be \"empty\"."
+                                    is_required: True
+                                actionText: string
+                                    description: "The action text of the choice. Optional - will use Title value if not provided."
+                                    is_required: True
+                                imageMimeType:
+                                    description: "The MIME type of the image (e.g., 'image/png', 'image/jpeg'). Auto-detected from URL if not explicitly provided"
+                                    is_required: True
+                                    type: string
+                                        enum:
+                                            - "image/png"
+                                            - "image/jpeg"
+                                            - "image/gif"
+                                            - "image/webp"
+                                            - "image/svg+xml"
+        messaging_rich_link:
+            label: "Rich Link Response"
+            description: "A response action containing UI components. Use this to prompt the user to show when response contains only one choice AND BOTH of the following elements in any combination or order : 1. A Website/Web page URL and 2. An image URL (direct image link, image hosting service , or URL ending in image extensions like .jpg, .png or .jpeg)"
+            target: "system://MessagingRichLink"
+            inputs:
+                parameters:
+                    description: "An array of choices, each containing a title, an image URL, and an image MIME type."
+                    is_required: True
+                    type: list
+                        value: object
+                            fields:
+                                LinkUrl: string
+                                    description: "The actual URL of the result."
+                                    is_required: True
+                                LinkTitle: string
+                                    description: "The text containing the hyperlink."
+                                    is_required: True
+                                ImageUrl: string
+                                    description: "A URL to an image representing the choice."
+                                    is_required: True
+                                ImageMimeType:
+                                    description: "The MIME type of the image (e.g., 'image/png', 'image/jpeg'). Auto-detected from URL if not explicitly provided"
+                                    is_required: True
+                                    type: string
+                                        enum:
+                                            - "image/png"
+                                            - "image/jpeg"
+                                            - "image/gif"
+                                            - "image/webp"
+                                            - "image/svg+xml"
+                                message: string
+                                    description: "Strictly extract only the introductory and contextual text from the response except the link url, image url and link title.  If no such descriptive text exists, the value MUST be \"empty\"."
+                                    is_required: True
+        messaging_time_picker:
+            label: "Time Picker"
+            description: "A response action containing UI components. Use this to prompt the user to select a specific time. The user will be presented with an interactive time picker UI for easy selection."
+            target: "system://MessagingTimePicker"
+            inputs:
+                message: string
+                    description: "Strictly extract only the introductory and contextual text from the response. This is all content *before* the list of choices. Do NOT include the latitude,longitude, radius and reply in this message. Do NOT use any phrase that serves as a heading for the choices such as \"here are some options to choose\". If no such descriptive text exists, the value MUST be \"empty\"."
+                    is_required: True
+                timePickerMessage: string
+                    description: "A concise and descriptive heading for the options. Use the short sentence or phrase that introduces the list of options if it already exists, otherwise use something like \"Here are a few options:\""
+                    is_required: True
+                reply: string
+                    description: "Optional confirmation message after the user selects a time."
+                    is_required: True
+                location:
+                    description: "Location metadata associated with the time slots."
+                    is_required: True
+                    type: object
+                        fields:
+                            name: string
+                                description: "Name of the location.If not provided, the value MUST be \"empty\"."
+                                is_required: True
+                            latitude: string
+                                description: "Latitude of the location. If not provided, the value MUST be \"empty\"."
+                                is_required: True
+                            longitude: string
+                                description: "Longitude of the location. If not provided, the value MUST be \"empty\"."
+                                is_required: True
+                            radius: number
+                                description: "Radius of the location. If not provided, the value MUST be 0."
+                                is_required: False
+                choices:
+                    description: "An array of available time slot choices."
+                    is_required: True
+                    type: list
+                        value: object
+                            fields:
+                                startTime: string
+                                    description: "Start time in ISO format with an offset: e.g., '2021-01-03T10:00+07:00'."
+                                    is_required: True
+                                duration: integer
+                                    description: "Duration in seconds."
+                                    is_required: True
+        messaging_audio:
+            label: "Audio Response"
+            description: "A response action that replies to the user with an audio note (voice message). Use this to send the response as spoken audio when the user communicated with an audio note."
+            target: "system://MessagingAudio"
+            inputs:
+                message: string
+                    description: "The complete conversational reply to be spoken to the user as an audio note. Use natural, spoken-style prose; omit markdown formatting and emojis so it reads well aloud."
+                    is_required: True

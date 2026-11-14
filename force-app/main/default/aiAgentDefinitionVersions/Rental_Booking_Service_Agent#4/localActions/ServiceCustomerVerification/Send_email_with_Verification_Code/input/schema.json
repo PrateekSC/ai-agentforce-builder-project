@@ -1,0 +1,14 @@
+{
+  "required" : [ "customerToVerify" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "customerToVerify" : {
+      "title" : "customerToVerify",
+      "description" : "Stores the username or email address was passed to the flow.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

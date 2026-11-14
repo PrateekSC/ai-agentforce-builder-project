@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AiAgentDefinitionVersion xmlns="http://soap.sforce.com/2006/04/metadata">
+    <articleAnswersGPTEnabled>false</articleAnswersGPTEnabled>
+    <billingMode>ActionBased</billingMode>
+    <citationsEnabled>false</citationsEnabled>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>The agent instructions</description>
+        <developerName>AgentScriptInternal_agent_instructions</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Agent Instructions</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>The next topic to be visited</description>
+        <developerName>AgentScriptInternal_next_topic</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Next Topic</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>This variable may also be referred to as VerifiedCustomerId</description>
+        <developerName>VerifiedCustomerId</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Verified Customer Id</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Stores the authentication key that&apos;s used to generate the verification code.</description>
+        <developerName>authenticationKey</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Authentication Key</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Stores the Salesforce user ID or contact ID.</description>
+        <developerName>customerId</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Customer Id</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Stores the customer ID type, whether it&apos;s a Salesforce user or a contact.</description>
+        <developerName>customerType</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Customer Type</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Stores the Salesforce Case ID created by an inbound email.</description>
+        <developerName>emailCaseId</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Email Case Id</label>
+        <visibility>External</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Stores the Salesforce Contact ID associated with the end user who sent the inbound email.</description>
+        <developerName>endUserContactId</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>End User Contact Id</label>
+        <visibility>External</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Stores email address of the end user who sent the inbound email.</description>
+        <developerName>endUserEmail</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>End User Email</label>
+        <visibility>External</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Boolean</dataType>
+        <description>Stores a boolean value that indicates whether the customer code is verified.</description>
+        <developerName>isVerified</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>isVerified</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Set the verification status message.</description>
+        <developerName>verficationMessage</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>verficationMessage</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>verificationCode</description>
+        <developerName>verificationCode</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>verificationCode</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <copilotPrimaryLanguage>en_US</copilotPrimaryLanguage>
+    <copilotSecondaryLanguages>en_GB</copilotSecondaryLanguages>
+    <genAiPlannerName>Rental_Booking_Service_Agent_v10</genAiPlannerName>
+    <isScriptCompatibleAgent>true</isScriptCompatibleAgent>
+    <knowledgeActionEnabled>false</knowledgeActionEnabled>
+    <knowledgeFallbackEnabled>false</knowledgeFallbackEnabled>
+    <planner>
+        <fullName>Rental_Booking_Service_Agent_v10</fullName>
+        <agentGraphRef>20ZjV0000031uT3</agentGraphRef>
+        <agentScript>20ZjV0000031fPB</agentScript>
+        <description>Deliver personalized customer interactions with an autonomous AI agent. Agentforce Service Agent intelligently supports your customers with common inquiries and escalates complex issues.</description>
+        <localTopicLinks>
+            <genAiPluginName>Booking_Changes</genAiPluginName>
+        </localTopicLinks>
+        <localTopicLinks>
+            <genAiPluginName>agent_router</genAiPluginName>
+        </localTopicLinks>
+        <localTopics>
+            <canEscalate>false</canEscalate>
+            <description>Handles customer requests to cancel, amend, update, or rebook an existing car rental reservation, including email, flight, pickup/drop-off date, time, and location.</description>
+            <genAiPluginInstructions>
+                <description>You are an AI Agent.</description>
+                <developerName>instruction0_179jV000000pSaA</developerName>
+                <language>en_US</language>
+                <masterLabel>instruction0_179jV000000pSaA</masterLabel>
+                <sortOrder>1</sortOrder>
+            </genAiPluginInstructions>
+            <language>en_US</language>
+            <localActionLinks>
+                <functionName>Verify_Customer_Identity</functionName>
+            </localActionLinks>
+            <localActionLinks>
+                <functionName>Cancel_Booking</functionName>
+            </localActionLinks>
+            <localActionLinks>
+                <functionName>Get_Booking_Details</functionName>
+            </localActionLinks>
+            <localActionLinks>
+                <functionName>Register_Customer</functionName>
+            </localActionLinks>
+            <localActionLinks>
+                <functionName>Amend_Booking</functionName>
+            </localActionLinks>
+            <localActionLinks>
+                <functionName>Create_Booking</functionName>
+            </localActionLinks>
+            <localActionLinks>
+                <functionName>Rebook_Vehicle</functionName>
+            </localActionLinks>
+            <localActionLinks>
+                <functionName>Get_Booking_Alternatives</functionName>
+            </localActionLinks>
+            <localActions>
+                <description>Updates the existing Booking record in Salesforce for changed fields only.</description>
+                <invocationTarget>AmendBookingAction</invocationTarget>
+                <invocationTargetType>apex</invocationTargetType>
+                <isConfirmationRequired>false</isConfirmationRequired>
+                <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+                <localDeveloperName>Amend_Booking</localDeveloperName>
+                <masterLabel>Amend Booking</masterLabel>
+            </localActions>
+            <localActions>
+                <description>Sets the Booking record Status to Cancelled in Salesforce.</description>
+                <invocationTarget>CancelBookingAction</invocationTarget>
+                <invocationTargetType>apex</invocationTargetType>
+                <isConfirmationRequired>false</isConfirmationRequired>
+                <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+                <localDeveloperName>Cancel_Booking</localDeveloperName>
+                <masterLabel>Cancel Booking</masterLabel>
+            </localActions>
+            <localActions>
+                <description>Creates a new rental Booking record in Salesforce for a customer who is already registered. Use this after Register Customer succeeds, or after Verify Customer Identity finds a customer with no booking on file. Do not call this until Verified Contact Id is stored.
+
+Before calling, collect every required trip field from the customer: pickup location, drop-off location, pickup datetime, drop-off datetime, and vehicle class. Optionally collect driver email and flight number. Repeat those values in chat and call this only after the customer confirms them. Do not guess missing dates, times, locations, or vehicle class.
+
+On success, read back the Booking Number from the action output and summarize the trip. If success is false, do not invent a booking number and do not claim the reservation was saved.
+
+Do not use this action to register a new customer, verify identity, look up an existing booking, offer cancellation alternatives, amend an existing booking, rebook over an existing booking, or cancel a booking.
+
+Do not call Create Booking when Verify Customer Identity found an existing booking and Next Action is CONTINUE_BOOKING_CHANGES. In that case use Get Booking Details, Amend Booking, Rebook Vehicle, or Cancel Booking instead.
+
+Do not call Create Booking when Verify failed with CUSTOMER_NOT_FOUND or Next Action is REGISTER_CUSTOMER. Ask for first name, last name, email, phone, and company, call Register Customer first, then collect trip details and call Create Booking.</description>
+                <invocationTarget>CreateBookingAction</invocationTarget>
+                <invocationTargetType>apex</invocationTargetType>
+                <isConfirmationRequired>false</isConfirmationRequired>
+                <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+                <localDeveloperName>Create_Booking</localDeveloperName>
+                <masterLabel>Create Booking</masterLabel>
+            </localActions>
+            <localActions>
+                <description>Returns amendment and rebooking options for a verified booking. Always call this when the customer asks to cancel, before Cancel Booking, and present options in plain language: (1) amend dates, locations, email, or flight, (2) rebook a different vehicle or time, (3) cancel only if they still want to cancel. Requires Verified Contact Id and Booking Number. Use also when the customer is unsure whether to change or cancel. Do not use this action to verify identity, save an amendment, create a new booking, or cancel. Never treat this action as a completed cancellation.</description>
+                <invocationTarget>GetBookingAlternativesAction</invocationTarget>
+                <invocationTargetType>apex</invocationTargetType>
+                <isConfirmationRequired>false</isConfirmationRequired>
+                <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+                <localDeveloperName>Get_Booking_Alternatives</localDeveloperName>
+                <masterLabel>Get Booking Alternatives</masterLabel>
+            </localActions>
+            <localActions>
+                <description>Loads one verified customer&apos;s rental booking from Salesforce, including pickup, drop-off, vehicle, email, flight, status, and cancellation fee.</description>
+                <invocationTarget>GetBookingDetailsAction</invocationTarget>
+                <invocationTargetType>apex</invocationTargetType>
+                <isConfirmationRequired>false</isConfirmationRequired>
+                <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+                <localDeveloperName>Get_Booking_Details</localDeveloperName>
+                <masterLabel>Get Booking Details</masterLabel>
+            </localActions>
+            <localActions>
+                <description>Creates a new Booking record in Salesforce and sets the original booking Status to Rebooked.</description>
+                <invocationTarget>RebookVehicleAction</invocationTarget>
+                <invocationTargetType>apex</invocationTargetType>
+                <isConfirmationRequired>false</isConfirmationRequired>
+                <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+                <localDeveloperName>Rebook_Vehicle</localDeveloperName>
+                <masterLabel>Rebook Vehicle</masterLabel>
+            </localActions>
+            <localActions>
+                <description>Creates a Customer Contact and Account in Salesforce when the person is not already on file. Use this only after Verify Customer Identity fails because the customer was not found, or Next Action is REGISTER_CUSTOMER, or errorCode is CUSTOMER_NOT_FOUND.
+
+Do not start a booking yet. Before calling, ask for first name, last name, and email. Also ask for phone and company name; those are optional but preferred for B2B. Repeat the details and call this only after the customer confirms them. Do not invent a name, email, phone, or company.
+
+On success, store Verified Contact Id from the output. Then collect pickup location, drop-off location, pickup datetime, drop-off datetime, and vehicle class, and call Create Booking. Do not call Create Booking in the same turn unless every trip field is already confirmed.
+
+If a Contact with that email already exists, treat success as true, store Verified Contact Id, and continue to Create Booking. Do not tell the customer registration failed.
+
+If success is false, do not create a booking and do not invent a Contact Id.
+
+Do not use this action to verify an existing booking, get booking details, get alternatives, amend, rebook, cancel, or create a Booking record.
+
+Do not call Register Customer when Verify already found a Contact. In that case store Verified Contact Id from Verify and either continue booking changes or call Create Booking if they have no reservation yet.</description>
+                <invocationTarget>RegisterCustomerAction</invocationTarget>
+                <invocationTargetType>apex</invocationTargetType>
+                <isConfirmationRequired>false</isConfirmationRequired>
+                <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+                <localDeveloperName>Register_Customer</localDeveloperName>
+                <masterLabel>Register Customer</masterLabel>
+            </localActions>
+            <localActions>
+                <description>Verifies an existing customer using email and optional booking number. Use this first.
+If success is false and Next Action is REGISTER_CUSTOMER, do not start a booking. Ask for first name, last name, email, phone, and company, then call Register Customer.
+If the customer is found but has no booking, collect trip details and call Create Booking.
+If an existing booking is found, continue with Get Booking Details, Amend Booking, Rebook Vehicle, or Cancel Booking.
+Do not use this action to create a Contact or a Booking.</description>
+                <invocationTarget>VerifyCustomerIdentityAction</invocationTarget>
+                <invocationTargetType>apex</invocationTargetType>
+                <isConfirmationRequired>false</isConfirmationRequired>
+                <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+                <localDeveloperName>Verify_Customer_Identity</localDeveloperName>
+                <masterLabel>Verify Customer Identity</masterLabel>
+            </localActions>
+            <localDeveloperName>Booking_Changes</localDeveloperName>
+            <masterLabel>Booking Changes</masterLabel>
+            <pluginType>Topic</pluginType>
+        </localTopics>
+        <localTopics>
+            <canEscalate>false</canEscalate>
+            <description>Welcome the user and determine the appropriate subagent based on user input</description>
+            <genAiPluginInstructions>
+                <description>You are an AI Agent.
+
+{{state.AgentScriptInternal_agent_instructions}}</description>
+                <developerName>instruction0_179jV000000pSa9</developerName>
+                <language>en_US</language>
+                <masterLabel>instruction0_179jV000000pSa9</masterLabel>
+                <sortOrder>1</sortOrder>
+            </genAiPluginInstructions>
+            <language>en_US</language>
+            <localDeveloperName>agent_router</localDeveloperName>
+            <masterLabel>Agent Router</masterLabel>
+            <pluginType>Topic</pluginType>
+        </localTopics>
+        <masterLabel>Rental Booking Service Agent</masterLabel>
+        <plannerSurfaces>
+            <adaptiveResponseAllowed>true</adaptiveResponseAllowed>
+            <callRecordingAllowed>false</callRecordingAllowed>
+            <outboundRouteConfigs>
+                <escalationMessage>One moment, I&apos;m transferring our conversation to get you more help.</escalationMessage>
+                <outboundRouteName>Outbound_Omni_Routing_Config_Flow</outboundRouteName>
+                <outboundRouteType>OmniChannelFlow</outboundRouteType>
+            </outboundRouteConfigs>
+            <surface>SurfaceAction__Messaging</surface>
+            <surfaceType>Messaging</surfaceType>
+        </plannerSurfaces>
+        <plannerType>Atlas__ConcurrentMultiAgentOrchestration</plannerType>
+    </planner>
+    <smallTalkEnabled>false</smallTalkEnabled>
+    <staticPromptsEnabled>false</staticPromptsEnabled>
+    <status>Active</status>
+    <stopRecPrompts>false</stopRecPrompts>
+    <surfacesEnabled>false</surfacesEnabled>
+    <toneType>Casual</toneType>
+    <version>10</version>
+    <welcomeMessage>Hi, I&apos;m an AI service assistant. How can I help you?</welcomeMessage>
+</AiAgentDefinitionVersion>

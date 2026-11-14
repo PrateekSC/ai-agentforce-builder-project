@@ -1,0 +1,56 @@
+{
+  "required" : [ "contactId", "dropoffDatetime", "dropoffLocation", "originalBookingNumber", "pickupDatetime", "pickupLocation", "vehicleClass" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "contactId" : {
+      "title" : "Verified Contact Id",
+      "description" : "Contact Id from identity verification.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "dropoffDatetime" : {
+      "title" : "Drop-off Datetime",
+      "description" : "New drop-off date and time.",
+      "lightning:type" : "lightning__dateTimeStringType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "dropoffLocation" : {
+      "title" : "Drop-off Location",
+      "description" : "New drop-off location. If omitted by the customer, reuse pickup location only after asking.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "originalBookingNumber" : {
+      "title" : "Original Booking Number",
+      "description" : "Existing booking being replaced.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "pickupDatetime" : {
+      "title" : "Pickup Datetime",
+      "description" : "New pickup date and time.",
+      "lightning:type" : "lightning__dateTimeStringType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "pickupLocation" : {
+      "title" : "Pickup Location",
+      "description" : "New pickup location stated by the customer.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "vehicleClass" : {
+      "title" : "Vehicle Class",
+      "description" : "Requested class such as Compact, SUV, or Van.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}
