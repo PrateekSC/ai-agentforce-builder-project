@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Gemini API Key</label>
+    <protected>false</protected>
+    <values>
+        <field>Value__c</field>
+        <value xsi:type="xsd:string">AQ.Ab8RN6K93KcBBTbnQX9TrRnyEY-C622u8E3pEN1aJ6fn36c_JA</value>
+    </values>
+</CustomMetadata>
