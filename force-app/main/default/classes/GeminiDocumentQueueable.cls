@@ -124,11 +124,13 @@ public without sharing class GeminiDocumentQueueable
                 };
 
             HttpRequest request = new HttpRequest();
+            
+            External_API_Key__mdt apiValue = [SELECT Id, Value__c FROM External_API_Key__mdt WHERE DeveloperName = 'Gemini_API_Key' LIMIT 1];
 
             request.setEndpoint(
                 'callout:Gemini_API/v1beta/models/' +
                 MODEL + ':generateContent' + '?key=' +
-                'AQ.Ab8RN6K93KcBBTbnQX9TrRnyEY-C622u8E3pEN1aJ6fn36c_JA'
+                apiValue.Value__c
             );
 
             request.setMethod('POST');
